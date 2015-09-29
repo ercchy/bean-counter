@@ -8,11 +8,28 @@
 
     var startTime = Date.now();
 
-    task("default", [ "version" ], function () {
+    desc("Lint and test");
+    task("default", [ "version", "lint" ], function () {
         var elspsedSeconds = (Date.now() - startTime) / 1000;
         console.log("\n\nBUILD OK (" + elspsedSeconds.toFixed(2) + "s)");
     });
 
+    //*** LINT
+
+    desc("Lint everything");
+    task("lint", ["lintNode", "lintClient"]);
+
+    task("lintNode", function() {
+        console.log("Linting Node.js code");
+    });
+
+    task("lintClient", function(){
+       console.log("Linting browser code");
+    });
+
+    //*** CHECK VERSION
+
+    desc("Check Node version");
     task("version", function() {
         console.log("Checking Node.js version: .");
         version.check({
