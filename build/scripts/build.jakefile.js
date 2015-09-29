@@ -5,6 +5,8 @@
     "use strict";
 
     var version = require("../util/version_checker.js");
+    var jshint = require("simplebuild-jshint");
+    var jshintConfig = require("../config/jshint.conf.js");
 
     var startTime = Date.now();
 
@@ -20,12 +22,22 @@
     task("lint", ["lintNode", "lintClient"]);
 
     task("lintNode", function() {
-        console.log("Linting Node.js code");
-    });
+        process.stdout.write("Linting Node.js code: ");
+        jshint.checkFiles({
+            files: [ "build/**/*.js" ],
+            options: jshintConfig.nodeOptions,
+            globals: jshintConfig.nodeGlobals
+        }, complete, fail);
+    }, { async: true });
 
     task("lintClient", function(){
-       console.log("Linting browser code");
-    });
+        process.stdout.write("Linting browser code");
+        jshint.checkFiles({
+            files: [ "src/client/**/*.js" ],
+            options: jshintConfig.clientOptions,
+            globals: jshintConfig.clientGlobals
+        }, complete, fail);
+    }, { async: true });
 
     //*** CHECK VERSION
 
@@ -37,7 +49,7 @@
             expected: require("../../package.json").engines.node,
             actual: process.version,
             strict: true
-        }, complete, fail)
+        }, complete, fail);
     }, { async: true });
 
 }());
