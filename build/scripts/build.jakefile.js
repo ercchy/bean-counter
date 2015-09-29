@@ -10,6 +10,7 @@
 
     var paths = require("../config/paths.js");
     var shell = require("shelljs");
+    var browserify = require("../util/browserify_runner.js");
 
     var startTime = Date.now();
 
@@ -62,12 +63,26 @@
         shell.rm("-rf", paths.distDir);
     });
 
-    task("buildClient", function() {
+    task("buildClient", [paths.clientDistDir, "bundleClientJs"], function() {
         console.log("Copying client code: .");
+        shell.cp(paths.clientDir + "/*.html", paths.clientDir + "/*.css", paths.clientDistDir);
     });
+
+    task("bundleClientJs", [paths.clientDistDir], function() {
+        console.log("Bundle browser code with Browserify: . ");
+        browserify.bundle({
+            entry: paths.clientEntryPoint,
+            outfile: paths.clientDistBundle,
+            options: {
+                standalone: "example",
+                debug: true
+            }
+        }, complete, fail);
+    }, { async: true });
 
     task("buildServer", function() {
         console.log("Copying server code: .");
+        shell.cp("-R", paths.serverDir, paths.serverEntryPoint, paths.distDir);
     });
 
     //*** CHECK VERSION
@@ -87,5 +102,6 @@
 
 
     directory(paths.distDir);
+    directory(paths.clientDistDir);
 
 }());
