@@ -4,8 +4,11 @@
 (function () {
     "use strict";
 
+    var startTime = Date.now();
+
     task("default", function () {
-        console.log("\n\nBUILD OK");
+        var elspsedSeconds = (Date.now() - startTime) / 1000;
+        console.log("\n\nBUILD OK (" + elspsedSeconds.toFixed(2) + "s)");
     });
 
 }());
